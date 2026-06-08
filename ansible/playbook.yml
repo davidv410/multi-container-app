@@ -1,0 +1,48 @@
+- hosts: servers
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Install Docker Compose plugin
+      shell: |
+        apt-get install -y curl
+        curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+
+    - name: Create app directory
+      file:
+        path: /app
+        state: directory
+
+    - name: Copy docker-compose.yml to server
+      copy:
+        src: /mnt/c/Users/PC/Desktop/backend-projects/multi-container-app/compose.yaml
+        dest: /app/compose.yaml
+
+    - name: Copy .env to server
+      copy:
+        src: /mnt/c/Users/PC/Desktop/backend-projects/multi-container-app/.env
+        dest: /app/.env
+
+    - name: Pull image from Docker Hub
+      community.docker.docker_image:
+        name: davidv410/todos-api
+        source: pull
+
+    - name: Run containers
+      shell: docker-compose -f /app/compose.yaml up -d
+      register: result
+      ignore_errors: yes
+
+    - name: Show output
+      debug:
+        var: result

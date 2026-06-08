@@ -1,6 +1,6 @@
 services:
   api:
-    build: .
+    image: davidv410/todos-api
     ports:
       - "9000:9000"
     env_file:
@@ -9,9 +9,6 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/todos
     depends_on:
       - mongo
-    volumes:
-      - .:/app
-      - /app/node_modules
 
   mongo:
     image: mongo:7
