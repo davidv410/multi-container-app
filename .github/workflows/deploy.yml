@@ -25,6 +25,15 @@ jobs:
           push: true
           tags: davidv410/todos-api:latest
 
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "compose.yaml,nginx.conf"
+          target: /app
+
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
         with:
@@ -34,4 +43,4 @@ jobs:
           script: |
             cd /app
             docker pull davidv410/todos-api
-            docker-compose up -d --force-recreate api
+            docker-compose up -d --force-recreate
