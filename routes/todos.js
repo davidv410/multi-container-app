@@ -9,7 +9,7 @@ export const todosRouter = Router()
 todosRouter.get('/', async (req, res) => {
     try{
         const todos = await Todo.find();
-        res.status(200).json(todos)
+        res.status(200).json({name: 'todos', todos})
     }catch(error){
         console.log(error)
     }
